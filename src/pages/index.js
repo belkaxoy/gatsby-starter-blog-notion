@@ -7,8 +7,8 @@ import Seo from "../components/seo"
 
 const BlogIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
-  const posts = data.allMarkdownRemark.nodes
-
+  const posts = data.allNotionArticle.nodes
+  console.log(data)
   if (posts.length === 0) {
     return (
       <Layout location={location} title={siteTitle}>
@@ -29,10 +29,12 @@ const BlogIndex = ({ data, location }) => {
       <Bio />
       <ol style={{ listStyle: `none` }}>
         {posts.map(post => {
-          const title = post.frontmatter.title || post.fields.slug
+          const { title, id, published, updatedAt, category, tags, author, internal } = post
+
+          if (!published) return
 
           return (
-            <li key={post.fields.slug}>
+            <li key={id}>
               <article
                 className="post-list-item"
                 itemScope
@@ -40,18 +42,24 @@ const BlogIndex = ({ data, location }) => {
               >
                 <header>
                   <h2>
-                    <Link to={post.fields.slug} itemProp="url">
+                    <Link to={title} itemProp="url">
                       <span itemProp="headline">{title}</span>
                     </Link>
                   </h2>
-                  <small>{post.frontmatter.date}</small>
+                  <small>{new Date(updatedAt).toLocaleDateString()}</small>
                 </header>
                 <section>
                   <p
                     dangerouslySetInnerHTML={{
-                      __html: post.frontmatter.description || post.excerpt,
+                      __html: internal.description || ' ',
                     }}
                     itemProp="description"
+                  />
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: author.name || ' ',
+                    }}
+                    itemProp="author"
                   />
                 </section>
               </article>
@@ -72,16 +80,25 @@ export const pageQuery = graphql`
         title
       }
     }
-    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+    allNotionArticle {
       nodes {
-        excerpt
-        fields {
-          slug
+        title
+        id
+        published
+        updatedAt
+        archived
+        category {
+          name
         }
-        frontmatter {
-          date(formatString: "MMMM DD, YYYY")
-          title
+        tags {
+          name
+        }
+        author {
+          name
+        }
+        internal {
           description
+          content
         }
       }
     }

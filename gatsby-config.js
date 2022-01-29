@@ -1,3 +1,7 @@
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 module.exports = {
   siteMetadata: {
     title: `Gatsby Starter Blog`,
@@ -46,6 +50,20 @@ module.exports = {
           `gatsby-remark-prismjs`,
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
+          {
+            resolve: `gatsby-source-notion-article`,
+            options: {
+              // token: 'secret_fefFvZUWStD40h2wJHkyyB5HIi1luyMRmZ3fIxm8ni2',
+              // databaseId: '41dd69c0a4284147aad6291b3a7e38c2',
+              token: process.env.NOTION_KEY,
+              databaseId: process.env.NOTION_DATABASE_ID,
+              // params: {
+              //   page_size: 3, // optional, default is 100
+              //   filter: {}, // optional
+              //   sort: {} // optional
+              // }
+            }
+          },
         ],
       },
     },

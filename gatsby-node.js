@@ -11,20 +11,49 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   const result = await graphql(
     `
       {
-        allMarkdownRemark(
-          sort: { fields: [frontmatter___date], order: ASC }
-          limit: 1000
-        ) {
+        allNotionArticle {
           nodes {
+            title
             id
-            fields {
-              slug
+            published
+            updatedAt
+            archived
+            category {
+              name
+            }
+            tags {
+              name
+            }
+            author {
+              name
+            }
+            internal {
+              description
+              content
             }
           }
         }
       }
     `
   )
+
+  // const result = await graphql(
+  //   `
+  //     {
+  //       allMarkdownRemark(
+  //         sort: { fields: [frontmatter___date], order: ASC }
+  //         limit: 1000
+  //       ) {
+  //         nodes {
+  //           id
+  //           fields {
+  //             slug
+  //           }
+  //         }
+  //       }
+  //     }
+  //   `
+  // )
 
   if (result.errors) {
     reporter.panicOnBuild(
@@ -34,7 +63,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     return
   }
 
-  const posts = result.data.allMarkdownRemark.nodes
+  const posts = result.data.allNotionArticle.nodes
 
   // Create blog posts pages
   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -46,7 +75,8 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
 
       createPage({
-        path: post.fields.slug,
+        path: post.title,
+        // path: post.fields.slug,
         component: blogPost,
         context: {
           id: post.id,
@@ -113,3 +143,4 @@ exports.createSchemaCustomization = ({ actions }) => {
     }
   `)
 }
+
