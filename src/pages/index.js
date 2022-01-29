@@ -29,7 +29,7 @@ const BlogIndex = ({ data, location }) => {
       <Bio />
       <ol style={{ listStyle: `none` }}>
         {posts.map(post => {
-          const { title, id, published, updatedAt, category, tags, author, internal } = post
+          const { title, id, published, updatedAt, category, tags, author, internal, featured_img } = post
 
           if (!published) return
 
@@ -46,6 +46,8 @@ const BlogIndex = ({ data, location }) => {
                       <span itemProp="headline">{title}</span>
                     </Link>
                   </h2>
+                  <img src={featured_img.url} alt={featured_img.alt} />
+                  <br />
                   <small>{new Date(updatedAt).toLocaleDateString()}</small>
                 </header>
                 <section>
@@ -99,6 +101,10 @@ export const pageQuery = graphql`
         internal {
           description
           content
+        }
+        featured_img {
+          url
+          alt
         }
       }
     }

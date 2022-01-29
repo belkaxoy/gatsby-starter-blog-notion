@@ -31,6 +31,10 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
               description
               content
             }
+            featured_img {
+              url
+              alt
+            }
           }
         }
       }
