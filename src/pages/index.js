@@ -31,7 +31,7 @@ const BlogIndex = ({ data, location }) => {
         {posts.map(post => {
           const { title, id, published, updatedAt, category, tags, author, internal, featured_img } = post
 
-          if (!published) return
+          if (!published) return null
 
           return (
             <li key={id}>
